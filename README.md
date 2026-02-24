@@ -1,1 +1,1 @@
-# Medical-Chatbot-
+# Medical Symptoms Checker Chatbot
