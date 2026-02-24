@@ -9,7 +9,7 @@ touch src/prompt.py
 touch .env
 touch setup.py
 touch app.py
-touch reseacrch/trails.ipynb
+touch research/trails.ipynb
 touch requirements.txt
 touch README.md
 
