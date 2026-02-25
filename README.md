@@ -1,4 +1,4 @@
-##🩺 SymptoSense – AI Powered Symptom Checker 
+# 🩺 SymptoSense – AI Powered Symptom Checker 
 
 An AI-powered symptom checker chatbot built using LangChain, OpenAI, Pinecone, and Flask.
 It uses Retrieval-Augmented Generation (RAG) to analyze user-entered symptoms and predict possible diseases using embedded medical knowledge.
@@ -23,7 +23,7 @@ It uses Retrieval-Augmented Generation (RAG) to analyze user-entered symptoms an
 ## STEP 1: Clone the Repository
 
 ```bash
-git clone <>
+git clone <https://github.com/Anshika2294/Medical-Chatbot-.git>
 cd medical-chatbot
 ```
 
