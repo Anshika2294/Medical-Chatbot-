@@ -1,11 +1,9 @@
-# Symptosense : AI powered health prediction
-# Medical-Chatbot-
-# 🏥 Medical Chatbot (RAG-Based AI Assistant)
+##🩺 SymptoSense – AI Powered Symptom Checker 
 
-An AI-powered medical chatbot built using **LangChain, OpenAI, Pinecone, and Flask**.  
-It uses Retrieval-Augmented Generation (RAG) to answer medical queries from embedded PDF documents.
+An AI-powered symptom checker chatbot built using LangChain, OpenAI, Pinecone, and Flask.
+It uses Retrieval-Augmented Generation (RAG) to analyze user-entered symptoms and predict possible diseases using embedded medical knowledge.
 
----
+⚠️ This system is for educational purposes only and does not replace professional medical advice.
 
 ## 🚀 Tech Stack
 
@@ -25,7 +23,7 @@ It uses Retrieval-Augmented Generation (RAG) to answer medical queries from embe
 ## STEP 1: Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone <>
 cd medical-chatbot
 ```
 
@@ -53,8 +51,8 @@ pip install -r requirements.txt
 Create a `.env` file in the root directory and add:
 
 ```
-PINECONE_API_KEY=your_pinecone_api_key
-OPENAI_API_KEY=your_openai_api_key
+PINECONE_API_KEY=pcsk_6zS5Q8_HrHbAovaaHNszkMazFeE7gPH5N3u3eosEAPhGXTWDobEiAKaGgG************
+OPENAI_API_KEY=sk-proj-X0TUsl6o2IFfLb9SxLyXOK6feDqeK2mY2AxbxIsCqfqJlGTcNhbvG8q1ED2PnO7Pok7wAbCymUyfDpd9RmfaLD39T6zn2h1jqunGB2xR_*************
 ```
 
 ---
