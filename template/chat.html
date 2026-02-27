@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SymptoSense – AI Medical Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --blue: #3B82F6;
+            --blue-dim: rgba(59,130,246,0.15);
+            --blue-border: rgba(59,130,246,0.25);
+            --blue-dark: #2563EB;
+            --green: #10B981;
+            --text: #F1F5F9;
+            --text-soft: #94A3B8;
+            --text-muted: #64748B;
+            --bg: #0B0F1A;
+            --surface: #111827;
+            --surface2: #1A2133;
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(255,255,255,0.11);
+            --grid: rgba(59,130,246,0.04);
+            --shadow: 0 4px 24px rgba(0,0,0,0.4);
+            --shadow-blue: 0 8px 40px rgba(59,130,246,0.12);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 54px;
+            background: rgba(11,15,26,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center;
+            padding: 0 28px; z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex; align-items: center; gap: 9px;
+            font-weight: 700; font-size: 15px; color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 30px; height: 30px;
+            background: var(--blue);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 0 14px rgba(59,130,246,0.4);
+        }
+
+        .nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+        .nav-badge {
+            display: flex; align-items: center; gap: 5px;
+            background: var(--blue-dim);
+            border: 1px solid var(--blue-border);
+            color: var(--blue);
+            font-size: 11px; font-weight: 600;
+            padding: 4px 11px; border-radius: 20px;
+        }
+
+        .nav-dot {
+            width: 6px; height: 6px;
+            background: var(--green); border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%,100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.6; transform:scale(1.4); }
+        }
+
+        /* MAIN */
+        .main {
+            margin-top: 54px; flex: 1;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 44px 20px 90px;
+        }
+
+        /* HERO */
+        .hero {
+            text-align: center; max-width: 580px;
+            margin-bottom: 34px;
+            animation: up 0.55s ease both;
+        }
+
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--blue-dim);
+            border: 1px solid var(--blue-border);
+            color: var(--blue);
+            font-size: 12px; font-weight: 500;
+            padding: 5px 14px; border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 46px; font-weight: 800;
+            line-height: 1.12; letter-spacing: -0.03em;
+            color: var(--text); margin-bottom: 14px;
+        }
+
+        .hero h1 span {
+            color: var(--blue);
+            text-shadow: 0 0 40px rgba(59,130,246,0.4);
+        }
+
+        .hero p {
+            font-size: 15px; color: var(--text-soft);
+            line-height: 1.7; max-width: 460px; margin: 0 auto;
+        }
+
+        @keyframes up {
+            from { opacity:0; transform:translateY(16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* CHAT BOX */
+        .chat-box {
+            width: 100%; max-width: 760px;
+            background: var(--surface);
+            border: 1px solid var(--border-bright);
+            border-radius: 20px;
+            box-shadow: var(--shadow-blue);
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            height: 510px;
+            animation: up 0.55s 0.1s ease both;
+        }
+
+        .chat-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 11px;
+            background: var(--surface);
+        }
+
+        .ch-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: var(--blue-dim); border: 1px solid var(--blue-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; position: relative;
+        }
+
+        .ch-icon .dot {
+            position: absolute; bottom: -2px; right: -2px;
+            width: 10px; height: 10px;
+            background: var(--green); border-radius: 50%;
+            border: 2px solid var(--surface);
+            animation: blink 2s infinite;
+        }
+
+        .ch-info h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+        .ch-info p  { font-size: 11px; color: var(--text-muted); margin-top:1px; }
+
+        .ch-status {
+            margin-left: auto;
+            background: rgba(16,185,129,0.12);
+            border: 1px solid rgba(16,185,129,0.25);
+            color: var(--green);
+            font-size: 11px; font-weight: 500;
+            padding: 3px 10px; border-radius: 20px;
+        }
+
+        /* MESSAGES */
+        .chat-msgs {
+            flex: 1; overflow-y: auto;
+            padding: 20px 18px;
+            display: flex; flex-direction: column; gap: 16px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-msgs::-webkit-scrollbar { width: 4px; }
+        .chat-msgs::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 10px; }
+
+        /* WELCOME */
+        .welcome-block {
+            text-align: center; padding: 10px 0;
+            animation: up 0.4s ease;
+        }
+
+        .w-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: var(--blue-dim); border: 1px solid var(--blue-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin: 0 auto 12px;
+        }
+
+        .welcome-block h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .welcome-block p  { font-size: 13px; color: var(--text-soft); line-height: 1.6; max-width: 360px; margin: 0 auto 16px; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+
+        .chip {
+            background: var(--surface2); border: 1px solid var(--border-bright);
+            color: var(--text-soft); font-size: 12px; font-weight: 500;
+            padding: 6px 13px; border-radius: 20px;
+            cursor: pointer; transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chip:hover {
+            background: var(--blue-dim); border-color: var(--blue-border);
+            color: var(--blue); transform: translateY(-1px);
+        }
+
+        /* BUBBLES */
+        .msg-row { display: flex; align-items: flex-end; gap: 9px; animation: up 0.28s ease; }
+        .msg-row.user { flex-direction: row-reverse; }
+
+        .av {
+            width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+        }
+
+        .av.bot { background: var(--blue-dim); border: 1px solid var(--blue-border); }
+        .av.me  { background: var(--surface2); border: 1px solid var(--border-bright); font-size: 11px; font-weight: 700; color: var(--text-muted); }
+
+        .bbl {
+            max-width: 68%; padding: 10px 14px;
+            font-size: 13.5px; line-height: 1.65;
+        }
+
+        .bbl.bot {
+            background: var(--surface2); border: 1px solid var(--border-bright);
+            border-radius: 13px; border-bottom-left-radius: 3px; color: var(--text);
+        }
+
+        .bbl.user {
+            background: var(--blue);
+            border-radius: 13px; border-bottom-right-radius: 3px;
+            color: white; box-shadow: 0 3px 14px rgba(59,130,246,0.3);
+        }
+
+        .t { font-size: 10px; color: var(--text-muted); margin-top: 3px; display: block; }
+        .msg-row.user .t { text-align: right; }
+
+        /* TYPING */
+        .typing-row { display: flex; align-items: flex-end; gap: 9px; animation: up 0.28s ease; }
+
+        .typing-bbl {
+            background: var(--surface2); border: 1px solid var(--border-bright);
+            border-radius: 13px; border-bottom-left-radius: 3px;
+            padding: 12px 15px; display: flex; align-items: center; gap: 4px;
+        }
+
+        .td {
+            width: 6px; height: 6px; background: var(--blue);
+            border-radius: 50%; animation: td 1.2s infinite; opacity: 0.45;
+        }
+
+        .td:nth-child(2) { animation-delay: 0.2s; }
+        .td:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes td {
+            0%,80%,100% { transform:translateY(0); opacity:0.4; }
+            40% { transform:translateY(-5px); opacity:1; }
+        }
+
+        .typing-note { font-size: 11px; color: var(--text-muted); margin-top: 4px; margin-left: 39px; }
+
+        /* FOOTER */
+        .chat-foot {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .inp-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface2); border: 1.5px solid var(--border-bright);
+            border-radius: 11px; padding: 7px 7px 7px 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .inp-wrap:focus-within {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+        }
+
+        .inp-wrap input {
+            flex: 1; border: none; background: transparent;
+            font-family: 'Inter', sans-serif; font-size: 13.5px;
+            color: var(--text); outline: none;
+        }
+
+        .inp-wrap input::placeholder { color: var(--text-muted); }
+
+        .send-btn {
+            height: 34px; padding: 0 16px;
+            background: var(--blue); color: white;
+            border: none; border-radius: 8px;
+            font-size: 12.5px; font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+        }
+
+        .send-btn:hover {
+            background: var(--blue-dark);
+            box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+            transform: translateY(-1px);
+        }
+
+        .send-btn:active { transform: translateY(0); }
+
+        .foot-note {
+            text-align: center; font-size: 11px;
+            color: var(--text-muted); margin-top: 7px;
+        }
+
+        /* FEATURE STRIP */
+        .strip {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            justify-content: center; margin-top: 24px;
+            animation: up 0.55s 0.2s ease both;
+        }
+
+        .pill {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--surface); border: 1px solid var(--border-bright);
+            border-radius: 20px; padding: 5px 13px;
+            font-size: 12px; color: var(--text-soft); font-weight: 500;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a class="nav-logo" href="#">
+            <div class="nav-logo-icon">🩺</div>
+            SymptoSense
+        </a>
+        <div class="nav-right">
+            <div class="nav-badge"><div class="nav-dot"></div> AI Online</div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="hero">
+            <div class="hero-tag">✦ Powered by Groq LLaMA 3</div>
+            <h1>Chat with an<br><span>AI Medical Assistant</span></h1>
+            <p>Describe your symptoms and get instant AI-driven clinical guidance. Fast, accurate, and available 24/7.</p>
+        </div>
+
+        <div class="chat-box">
+            <div class="chat-head">
+                <div class="ch-icon">🩺<div class="dot"></div></div>
+                <div class="ch-info">
+                    <h3>SymptoSense AI</h3>
+                    <p>Clinical guidance assistant</p>
+                </div>
+                <div class="ch-status">● Active</div>
+            </div>
+
+            <div class="chat-msgs" id="chatMsgs">
+                <div class="welcome-block" id="welcomeBlock">
+                    <div class="w-icon">🏥</div>
+                    <h3>Hello, I'm SymptoSense</h3>
+                    <p>Describe your symptoms and I'll provide AI-driven clinical guidance to help you understand your health.</p>
+                    <div class="chips">
+                        <span class="chip" onclick="quickSend('Fever for 2 days')">🤒 Fever for 2 days</span>
+                        <span class="chip" onclick="quickSend('Severe headache and nausea')">🤕 Severe headache</span>
+                        <span class="chip" onclick="quickSend('Chest pain and shortness of breath')">😮‍💨 Chest pain</span>
+                        <span class="chip" onclick="quickSend('Skin rash on my arm for 3 days')">🩹 Skin rash</span>
+                        <span class="chip" onclick="quickSend('Joint pain and swelling')">🦴 Joint pain</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-foot">
+                <form id="chatForm" onsubmit="sendMsg(event)">
+                    <div class="inp-wrap">
+                        <input type="text" id="inp" placeholder="Describe your symptoms (e.g., fever and headache for 2 days)..." autocomplete="off" required />
+                        <button type="submit" class="send-btn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+                <div class="foot-note">⚠️ Educational use only — not a substitute for professional medical advice.</div>
+            </div>
+        </div>
+
+        <div class="strip">
+            <div class="pill">🔬 Symptom Analysis</div>
+            <div class="pill">⚡ Instant Response</div>
+            <div class="pill">🧠 AI-Powered</div>
+            <div class="pill">🔒 Private & Secure</div>
+            <div class="pill">📋 Clinical Guidance</div>
+        </div>
+    </main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    const time = () => { const d = new Date(); return d.getHours() + ":" + String(d.getMinutes()).padStart(2,"0"); }
+    const scroll = () => { const el = document.getElementById("chatMsgs"); el.scrollTop = el.scrollHeight; }
+
+    function quickSend(text) {
+        document.getElementById("inp").value = text;
+        document.getElementById("chatForm").dispatchEvent(new Event("submit"));
+    }
+
+    function formatBotResponse(text) {
+        let html = text
+            .replace(/(Possible Conditions|Severity Level|Explanation|Recommended Action|When to See a Doctor|Disclaimer):/g,
+                '<div class="resp-section">$1</div>')
+            .replace(/(\d+)\.\s+(.+?)(?=\n\d+\.|\n[A-Z]|$)/gs,
+                '<div class="resp-item"><span class="resp-num">$1</span><span>$2</span></div>')
+            .replace(/\n/g, ' ');
+        return html;
+    }
+
+    function addUser(text) {
+        $("#chatMsgs").append(`
+            <div class="msg-row user">
+                <div><div class="bbl user">${text}</div><span class="t">${time()}</span></div>
+                <div class="av me">Y</div>
+            </div>`);
+        scroll();
+    }
+
+    function showTyping() {
+        $("#chatMsgs").append(`
+            <div class="typing-row" id="typingRow">
+                <div class="av bot">🩺</div>
+                <div>
+                    <div class="typing-bbl"><div class="td"></div><div class="td"></div><div class="td"></div></div>
+                    <div class="typing-note">SymptoSense is analyzing your symptoms...</div>
+                </div>
+            </div>`);
+        scroll();
+    }
+
+    function addBot(text) {
+        $("#typingRow").remove();
+        const formatted = formatBotResponse(text);
+        $("#chatMsgs").append(`
+            <div class="msg-row">
+                <div class="av bot">🩺</div>
+                <div><div class="bbl bot">${formatted}</div><span class="t">${time()}</span></div>
+            </div>`);
+        scroll();
+    }
+
+    function sendMsg(e) {
+        e.preventDefault();
+        const text = $("#inp").val().trim();
+        if (!text) return;
+        $("#welcomeBlock").fadeOut(180, function(){ $(this).remove(); });
+        $("#inp").val("");
+        addUser(text);
+        showTyping();
+        $.ajax({ data: { msg: text }, type: "POST", url: "/get" })
+            .done(data => addBot(data))
+            .fail(() => addBot("Sorry, something went wrong. Please try again."));
+    }
+</script>
+</body>
+</html>
